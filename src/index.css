@@ -1,0 +1,19 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: sans-serif;
+  background-color: #F4F5F6;
+}
+
+:root {
+  --bg-primary: #F4F5F6;
+  --header-bg: #ffffff;
+  --green-light: #e6f7e6;
+  --green-dark: #2e7d32;
+  --text-primary: #000000;
+  --text-secondary: #333333;
+}

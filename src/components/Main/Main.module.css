@@ -1,0 +1,35 @@
+.container {
+  text-align: center;
+  padding: 40px;
+}
+
+.buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 15px 30px;
+  font-size: 18px;
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn:hover {
+  background-color: #1b5e20;
+}
+
+.logout {
+  background-color: #d32f2f;
+}
+
+.logout:hover {
+  background-color: #b71c1c;
+}
