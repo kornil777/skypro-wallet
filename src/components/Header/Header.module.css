@@ -1,16 +1,64 @@
 .header {
   background-color: #ffffff;
+  background-size: auto;
   height: 64px;
-  max-width: 100%;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 23px;
   display: flex;
   align-items: center;
+  justify-content: space-between; /* лого слева, навигация по центру, кнопка справа */
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.logo {
-padding-left: 120px;
-padding-top: 23px;
-padding-bottom: 23px;
+
+
+.nav {
+  display: flex;
+  gap: 32px;
+  /* абсолютное центрирование не нужно, т.к. между лого и кнопкой пустое пространство */
+}
+
+.link {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 170%;
+  text-align: center;
+  color: #999999;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.link:hover {
+  color: #7334EA;
+}
+
+.active {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 170%;
+  text-align: center;
+  color: #7334EA;
+  text-decoration: underline;
+  
+}
+
+.logoutBtn {
+  background: none;
+  border: none;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 170%;
+  text-align: center;
+  color: #999999;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.logoutBtn:hover {
+  color: #7334EA;
 }

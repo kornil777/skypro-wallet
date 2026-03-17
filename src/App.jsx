@@ -2,10 +2,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Header from './components/Header/Header';
 import Login from './components/Login/Login';
 import Register from './components/Register/Register';
-import Main from './components/Main/Main';
-import Expenses from './components/Expenses/Expenses';
-import Analysis from './components/Analysis/Analysis';
-import Table from './components/Table/Table';
+import ExpensesPage from './components/ExpensesPage/ExpensesPage';
+import Analysis from './components/Analysis/Analysis'; // пока заглушка
 import PrivateRoute from './components/PrivateRoute';
 import styles from './App.module.css';
 
@@ -21,15 +19,7 @@ function App() {
             path="/"
             element={
               <PrivateRoute>
-                <Main />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/expenses"
-            element={
-              <PrivateRoute>
-                <Expenses />
+                <ExpensesPage />
               </PrivateRoute>
             }
           />
@@ -38,14 +28,6 @@ function App() {
             element={
               <PrivateRoute>
                 <Analysis />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/table"
-            element={
-              <PrivateRoute>
-                <Table />
               </PrivateRoute>
             }
           />

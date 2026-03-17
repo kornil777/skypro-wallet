@@ -1,5 +1,7 @@
 .container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px;
   background: white;
-  padding: 20px;
-  border-radius: 8px;
+  border-radius: 30px;
 }
