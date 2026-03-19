@@ -1,15 +1,20 @@
 .header {
   background-color: #ffffff;
-  background-size: auto;
-  height: 64px;
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 0 23px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* лого слева, навигация по центру, кнопка справа */
+  width: 100%; /* фон на всю ширину */
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
+
+.headerContent {
+  max-width: 1440px; /* ограничение ширины контента */
+  margin: 0 auto;    /* центрирование */
+  padding: 0 118px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* лого слева, ссылки по центру, кнопка справа */
+}
+
+/* Остальные стили (logoImg, nav, link, active, logoutBtn) остаются без изменений */
 
 
 

@@ -11,33 +11,35 @@ const Header = () => {
 
   return (
     <header className={styles.header}>
-      {/* Левый блок: логотип */}
-      <div className={styles.logoBlock}>
-        <img src={logo} alt="SkyproWallet" className={styles.logoImg} />
-      </div>
+      <div className={styles.headerContent}>
+        {/* Левый блок: логотип */}
+        <div className={styles.logoBlock}>
+          <img src={logo} alt="SkyproWallet" className={styles.logoImg} />
+        </div>
 
-      {/* Центральный блок: навигация */}
-      <nav className={styles.nav}>
-        <NavLink
-          to="/"
-          end // важно: чтобы не подсвечивался при вложенных маршрутах
-          className={({ isActive }) => (isActive ? styles.active : styles.link)}
-        >
-          Мои расходы
-        </NavLink>
-        <NavLink
-          to="/analysis"
-          className={({ isActive }) => (isActive ? styles.active : styles.link)}
-        >
-          Анализ расходов
-        </NavLink>
-      </nav>
+        {/* Центральный блок: навигация */}
+        <nav className={styles.nav}>
+          <NavLink
+            to="/"
+            end
+            className={({ isActive }) => (isActive ? styles.active : styles.link)}
+          >
+            Мои расходы
+          </NavLink>
+          <NavLink
+            to="/analysis"
+            className={({ isActive }) => (isActive ? styles.active : styles.link)}
+          >
+            Анализ расходов
+          </NavLink>
+        </nav>
 
-      {/* Правый блок: кнопка выхода */}
-      <div className={styles.logoutBlock}>
-        <button onClick={handleLogout} className={styles.logoutBtn}>
-          Выйти
-        </button>
+        {/* Правый блок: кнопка выхода */}
+        <div className={styles.logoutBlock}>
+          <button onClick={handleLogout} className={styles.logoutBtn}>
+            Выйти
+          </button>
+        </div>
       </div>
     </header>
   );
