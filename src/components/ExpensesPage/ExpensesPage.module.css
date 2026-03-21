@@ -31,6 +31,7 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  padding-right: 0;
 }
 
 .tableTitle {
@@ -153,6 +154,7 @@
   box-sizing: border-box;
   font-family: "Montserrat", sans-serif;
   font-size: 12px;
+  
 }
 
 .input::placeholder {
@@ -231,7 +233,7 @@
   border: none;
   border-radius: 6px;
   padding: 12px;
-  font-size: 16px;
+  font-size: 12px;
   cursor: pointer;
   box-sizing: border-box;
   display: flex;

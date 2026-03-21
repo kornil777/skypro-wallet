@@ -1,31 +1,26 @@
 .header {
   background-color: #ffffff;
-  width: 100%; /* фон на всю ширину */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  width: 100%;
 }
 
 .headerContent {
-  max-width: 1440px; /* ограничение ширины контента */
-  margin: 0 auto;    /* центрирование */
+  max-width: 1440px; 
+  margin: 0 auto; 
   padding: 0 118px;
   height: 64px;
   display: flex;
   align-items: center;
-  justify-content: space-between; /* лого слева, ссылки по центру, кнопка справа */
+  justify-content: space-between; 
 }
-
-/* Остальные стили (logoImg, nav, link, active, logoutBtn) остаются без изменений */
-
-
 
 .nav {
   display: flex;
   gap: 32px;
-  /* абсолютное центрирование не нужно, т.к. между лого и кнопкой пустое пространство */
+
 }
 
 .link {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-weight: 600;
   font-size: 14px;
   line-height: 170%;
@@ -36,34 +31,33 @@
 }
 
 .link:hover {
-  color: #7334EA;
+  color: #7334ea;
 }
 
 .active {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-weight: 600;
   font-size: 14px;
   line-height: 170%;
   text-align: center;
-  color: #7334EA;
+  color: #7334ea;
   text-decoration: underline;
-  
 }
 
 .logoutBtn {
   background: none;
   border: none;
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-weight: 600;
   font-size: 14px;
   line-height: 170%;
   text-align: center;
-  color: #999999;
+  color: #000000;
   cursor: pointer;
   padding: 0;
   transition: color 0.2s;
 }
 
 .logoutBtn:hover {
-  color: #7334EA;
+  color: #7334ea;
 }

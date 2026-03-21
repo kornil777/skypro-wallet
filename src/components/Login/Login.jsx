@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from './Login.module.css';
 
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,7 +19,7 @@ const Login = () => {
   return (
     <div className={styles.container}>
       <h2>Вход</h2>
-      <form onSubmit={handleSubmit}>
+      <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.field}>
           <input
             type="email"
@@ -37,12 +38,18 @@ const Login = () => {
             required
           />
         </div>
+        
+      </form>
+    
         <button type="submit" className={styles.btn}>Войти</button>
-        <p className={styles.link}>
+        <div>
+          <p className={styles.link}>
           Нужно зарегистрироваться? 
           <Link to="/register">Регистрируйтесь здесь</Link>
         </p>
-      </form>
+      
+        
+      </div>
     </div>
   );
 };

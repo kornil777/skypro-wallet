@@ -1,14 +1,19 @@
 .container {
   width: 379px;
+  height: 374px;
   background: white;
   border-radius: 30px;
   box-shadow: 0px 20px 67px -12px rgba(0, 0, 0, 0.21);
-  padding: 24px 33px;
+  padding: 32px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  justify-content: space-between;
 }
 
 .container h2 {
-  margin-bottom: 20px;
+  
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
   font-size: 24px;
@@ -18,8 +23,13 @@
   letter-spacing: 0px;
 }
 
+.form {
+  display: flex;
+  flex-direction: column;
+  
+}
 .field {
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
 
 .field input {
@@ -50,13 +60,14 @@
   border: none;
   border-radius: 6px;
   padding: 12px;
-  font-size: 16px;
+  font-size: 12px;
   cursor: pointer;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 12px;
+  font-family: Montserrat;
+  
 }
 
 .btn:hover {
@@ -74,10 +85,13 @@
 
 .link a {
   color: #999999;
-  text-decoration: none;
+  text-decoration: underline;
   font-weight: 500;
 }
 
 .link a:hover {
   text-decoration: underline;
+}
+.logoutBtn{
+  display: none;
 }

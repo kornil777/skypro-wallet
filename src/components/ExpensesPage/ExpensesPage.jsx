@@ -138,7 +138,7 @@ const ExpensesPage = () => {
             <div className={styles.field}>
               <label className={styles.label}>Дата</label>
               <input
-                type="date"
+                
                 name="date"
                 placeholder="Введите дату"
                 value={newExpense.date}
