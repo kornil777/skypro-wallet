@@ -18,10 +18,10 @@ const mockExpenses = [
 
 const categories = [
   { name: 'Еда', icon: <FaUtensils /> },
-  { name: 'транспорт', icon: <FaHome /> },
-  { name: 'жилье', icon: <FaGraduationCap /> },
-  { name: 'развлечение', icon: <FaCar /> },
-  { name: 'образование', icon: <FaFilm /> },
+  { name: 'транспорт', icon: <FaCar /> },
+  { name: 'жилье', icon: <FaHome /> },
+  { name: 'развлечение', icon: <FaFilm /> },
+  { name: 'образование', icon: <FaGraduationCap /> },
   { name: 'другое', icon: <FaEllipsisH /> },
 ];
 

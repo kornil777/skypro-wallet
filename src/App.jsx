@@ -3,7 +3,7 @@ import Header from './components/Header/Header';
 import Login from './components/Login/Login';
 import Register from './components/Register/Register';
 import ExpensesPage from './components/ExpensesPage/ExpensesPage';
-import Analysis from './components/Analysis/Analysis'; // пока заглушка
+import Analysis from './components/Analysis/Analysis';
 import PrivateRoute from './components/PrivateRoute';
 import styles from './App.module.css';
 
