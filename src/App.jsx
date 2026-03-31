@@ -1,38 +1,29 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 import Header from './components/Header/Header';
-import Login from './components/Login/Login';
-import Register from './components/Register/Register';
-import ExpensesPage from './components/ExpensesPage/ExpensesPage';
-import Analysis from './components/Analysis/Analysis';
-import PrivateRoute from './components/PrivateRoute';
-import styles from './App.module.css';
+import AppRoutes from './routes/AppRoutes';
+import styled from 'styled-components';
+
+const Main = styled.main`
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 20px;
+  min-height: calc(100vh - 64px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f4f5f6;
+`;
 
 function App() {
   return (
     <BrowserRouter>
-      <Header />
-      <main className={styles.main}>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route
-            path="/"
-            element={
-              <PrivateRoute>
-                <ExpensesPage />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/analysis"
-            element={
-              <PrivateRoute>
-                <Analysis />
-              </PrivateRoute>
-            }
-          />
-        </Routes>
-      </main>
+      <AuthProvider>
+        <Header />
+        <Main>
+          <AppRoutes />
+        </Main>
+      </AuthProvider>
     </BrowserRouter>
   );
 }
