@@ -264,7 +264,7 @@ const Analysis = () => {
   const currentYear = baseDate.getFullYear();
   const currentMonth = baseDate.getMonth();
   const months = Array.from({ length: 24 }, (_, i) => {
-    return new Date(currentYear, currentMonth - 12 + i, 1);
+    return new Date(currentYear, currentMonth - 12 + i, 0);
   });
 
   const scrollContainerRef = useRef(null);

@@ -1,9 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FiTrash2 } from 'react-icons/fi';
 import { FaUtensils, FaHome, FaGraduationCap, FaCar, FaFilm, FaEllipsisH } from 'react-icons/fa';
+import { useFormValidation } from '../hooks/useFormValidation';
+import {
+  Input,
+  SubmitButton,
+} from '../styles/FormStyles';
 
-// Моковые данные
+// Моковые данные расходов
 const mockExpenses = [
   { id: 1, description: 'Продукты', category: 'Еда', date: '2026-03-15', amount: 500 },
   { id: 2, description: 'Такси', category: 'транспорт', date: '2026-03-16', amount: 200 },
@@ -23,6 +28,7 @@ const categories = [
   { name: 'другое', icon: <FaEllipsisH /> },
 ];
 
+// Стилизованные компоненты
 const Page = styled.div`
   max-width: 1440px;
   margin: 0 auto;
@@ -155,11 +161,16 @@ const FormTitle = styled.h2`
   color: #333;
 `;
 
-const FormGroup = styled.div`
-  margin-bottom: 20px;
+const Form = styled.form`
   display: flex;
   flex-direction: column;
-  row-gap: 16px;
+  gap: 20px;
+`;
+
+const FieldGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 `;
 
 const Label = styled.label`
@@ -167,30 +178,17 @@ const Label = styled.label`
   font-weight: 600;
   font-size: 16px;
   line-height: 100%;
-  margin-bottom: 8px;
   color: #333;
-`;
 
-const Input = styled.input`
-  width: 313px;
-  height: 39px;
-  padding: 12px;
-  border: 0.5px solid #ccc;
-  border-radius: 6px;
-  color: #000;
-  box-sizing: border-box;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 12px;
-
-  &::placeholder {
-    color: #999;
-  }
-
-  &:focus {
-    outline: none;
-    border-color: #7334ea;
-    background-color: #f1ebfd;
-  }
+  ${({ $hasError }) =>
+    $hasError &&
+    `
+      &::after {
+        content: '*';
+        color: #f25050;
+        margin-left: 4px;
+      }
+    `}
 `;
 
 const CategoriesGrid = styled.div`
@@ -198,6 +196,7 @@ const CategoriesGrid = styled.div`
   flex-wrap: wrap;
   gap: 8px;
   width: 313px;
+  margin-top: 4px;
 `;
 
 const CategoryButton = styled.button`
@@ -235,59 +234,71 @@ const CategoryButton = styled.button`
   }
 `;
 
-const AddButton = styled.button`
-  width: 313px;
-  height: 39px;
-  background-color: #7334ea;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 12px;
-  font-size: 12px;
-  cursor: pointer;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 600;
-
-  &:hover {
-    background-color: #5b2ab5;
-  }
-`;
+// Валидация для формы нового расхода
+const validationRules = {
+  description: {
+    required: true,
+    message: 'Введите описание',
+  },
+  category: {
+    required: true,
+    message: 'Выберите категорию',
+  },
+  date: {
+    required: true,
+    message: 'Введите дату',
+  },
+  amount: {
+    required: true,
+    pattern: /^\d+(\.\d{1,2})?$/,
+    message: 'Введите корректную сумму (только цифры)',
+  },
+};
 
 const ExpensesPage = () => {
   const [expenses, setExpenses] = useState(mockExpenses);
-  const [newExpense, setNewExpense] = useState({
-    description: '',
-    category: '',
-    date: '',
-    amount: '',
-  });
+  const [isSubmitFailed, setIsSubmitFailed] = useState(false);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewExpense(prev => ({ ...prev, [name]: value }));
-  };
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleBlur,
+    validateAll,
+    resetForm,
+    isFormValid,
+    setAllTouched,
+  } = useFormValidation(
+    { description: '', category: '', date: '', amount: '' },
+    validationRules
+  );
 
-  const handleCategorySelect = (category) => {
-    setNewExpense(prev => ({ ...prev, category }));
-  };
+  // При изменении полей, если была неудачная попытка отправки и все поля валидны, снимаем блокировку
+  useEffect(() => {
+    if (isSubmitFailed && isFormValid()) {
+      setIsSubmitFailed(false);
+    }
+  }, [values, errors, isSubmitFailed, isFormValid]);
 
   const handleAddExpense = (e) => {
     e.preventDefault();
-    if (!newExpense.description || !newExpense.category || !newExpense.date || !newExpense.amount) {
-      alert('Заполните все поля');
+    // Помечаем все поля как тронутые, чтобы сразу показать ошибки
+    setAllTouched();
+    const isValid = validateAll();
+    if (!isValid) {
+      setIsSubmitFailed(true);
       return;
     }
+    // Если всё ок, добавляем расход
     const expense = {
       id: Date.now(),
-      ...newExpense,
-      amount: parseFloat(newExpense.amount),
+      ...values,
+      amount: parseFloat(values.amount),
     };
     setExpenses([expense, ...expenses]);
-    setNewExpense({ description: '', category: '', date: '', amount: '' });
+    resetForm();
+    setIsSubmitFailed(false);
   };
 
   const handleDelete = (id) => {
@@ -295,6 +306,9 @@ const ExpensesPage = () => {
       setExpenses(expenses.filter(exp => exp.id !== id));
     }
   };
+
+  // Кнопка активна, только если не было неудачной отправки
+  const isButtonDisabled = isSubmitFailed;
 
   return (
     <Page>
@@ -332,59 +346,88 @@ const ExpensesPage = () => {
 
         <FormContainer>
           <FormTitle>Новый расход</FormTitle>
-          <form onSubmit={handleAddExpense}>
-            <FormGroup>
-              <Label>Описание</Label>
+          <Form onSubmit={handleAddExpense}>
+            {/* Описание */}
+            <FieldGroup>
+              <Label $hasError={touched.description && errors.description}>
+                Описание
+              </Label>
               <Input
                 type="text"
                 name="description"
                 placeholder="Введите описание"
-                value={newExpense.description}
-                onChange={handleInputChange}
+                value={values.description}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                $hasError={touched.description && errors.description}
+                $isValid={touched.description && !errors.description && values.description}
               />
-            </FormGroup>
+            </FieldGroup>
 
-            <FormGroup>
-              <Label>Категория</Label>
+            {/* Категория */}
+            <FieldGroup>
+              <Label $hasError={touched.category && errors.category}>
+                Категория
+              </Label>
               <CategoriesGrid>
                 {categories.map(cat => (
                   <CategoryButton
                     key={cat.name}
                     type="button"
-                    className={newExpense.category === cat.name ? 'active' : ''}
-                    onClick={() => handleCategorySelect(cat.name)}
+                    className={values.category === cat.name ? 'active' : ''}
+                    onClick={() => {
+                      // Создаём синтетическое событие для обновления значения и пометки touched
+                      const syntheticEvent = { target: { name: 'category', value: cat.name } };
+                      handleChange(syntheticEvent);
+                      // Всегда вызываем blur, чтобы принудительно обновить touched и ошибку
+                      handleBlur(syntheticEvent);
+                    }}
                   >
                     {cat.icon}
                     {cat.name}
                   </CategoryButton>
                 ))}
               </CategoriesGrid>
-            </FormGroup>
+            </FieldGroup>
 
-            <FormGroup>
-              <Label>Дата</Label>
+            {/* Дата */}
+            <FieldGroup>
+              <Label $hasError={touched.date && errors.date}>
+                Дата
+              </Label>
               <Input
                 type="date"
                 name="date"
                 placeholder="Введите дату"
-                value={newExpense.date}
-                onChange={handleInputChange}
+                value={values.date}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                $hasError={touched.date && errors.date}
+                $isValid={touched.date && !errors.date && values.date}
               />
-            </FormGroup>
+            </FieldGroup>
 
-            <FormGroup>
-              <Label>Сумма</Label>
+            {/* Сумма */}
+            <FieldGroup>
+              <Label $hasError={touched.amount && errors.amount}>
+                Сумма
+              </Label>
               <Input
                 type="number"
                 name="amount"
                 placeholder="0 ₽"
-                value={newExpense.amount}
-                onChange={handleInputChange}
+                value={values.amount}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                $hasError={touched.amount && errors.amount}
+                $isValid={touched.amount && !errors.amount && values.amount}
               />
-            </FormGroup>
+            </FieldGroup>
 
-            <AddButton type="submit">Добавить новый расход</AddButton>
-          </form>
+            <SubmitButton type="submit" $disabled={isButtonDisabled}>
+              Добавить новый расход
+            </SubmitButton>
+          </Form>
         </FormContainer>
       </Container>
     </Page>

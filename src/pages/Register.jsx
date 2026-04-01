@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAuth } from '../context/AuthContext';
+import { Input, SubmitButton, ErrorMessage } from '../styles/FormStyles';
 
 const Container = styled.div`
   width: 379px;
@@ -23,56 +24,7 @@ const Title = styled.h2`
   text-align: center;
   color: #333;
   margin: 0;
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-`;
-
-const Input = styled.input`
-  width: 313px;
-  height: 39px;
-  padding: 12px;
-  border: 0.5px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  color: #000;
-  box-sizing: border-box;
-  font-family: 'Montserrat', sans-serif;
-
-  &::placeholder {
-    color: #999;
-  }
-
-  &:focus {
-    outline: none;
-    border-color: #7334ea;
-  }
-`;
-
-const Button = styled.button`
-  width: 313px;
-  height: 39px;
-  background-color: #7334ea;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 12px;
-  font-size: 12px;
-  cursor: pointer;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 600;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: #5b2ab5;
-  }
+  
 `;
 
 const LinkText = styled.p`
@@ -94,47 +46,186 @@ const LinkText = styled.p`
   }
 `;
 
+const FieldWrapper = styled.div`
+  position: relative;
+  margin-bottom: 12px;
+
+  ${({ $hasError }) =>
+    $hasError &&
+    `
+      &::after {
+        content: '*';
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #f25050;
+        font-size: 16px;
+        font-weight: bold;
+        pointer-events: none;
+      }
+    `}
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
 const Register = () => {
+  const { login } = useAuth(); // временно используем login, но потом заменим на register
+  const navigate = useNavigate();
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth();
-  const navigate = useNavigate();
+
+  const [nameTouched, setNameTouched] = useState(false);
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [passwordTouched, setPasswordTouched] = useState(false);
+
+  const [nameError, setNameError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [generalError, setGeneralError] = useState('');
+
+  // Валидаторы
+  const validateName = (value) => {
+    if (!value) return 'Введите имя';
+    return '';
+  };
+
+  const validateEmail = (value) => {
+    if (!value) return 'Введите email';
+    const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
+    if (!emailRegex.test(value)) return 'Введите корректный email';
+    return '';
+  };
+
+  const validatePassword = (value) => {
+    if (!value) return 'Введите пароль';
+    if (value.length < 6) return 'Пароль должен содержать не менее 6 символов';
+    return '';
+  };
+
+  // Пересчёт ошибок при изменении полей, если они тронуты или была попытка отправки
+  useEffect(() => {
+    if (nameTouched || submitAttempted) {
+      setNameError(validateName(name));
+    }
+  }, [name, nameTouched, submitAttempted]);
+
+  useEffect(() => {
+    if (emailTouched || submitAttempted) {
+      setEmailError(validateEmail(email));
+    }
+  }, [email, emailTouched, submitAttempted]);
+
+  useEffect(() => {
+    if (passwordTouched || submitAttempted) {
+      setPasswordError(validatePassword(password));
+    }
+  }, [password, passwordTouched, submitAttempted]);
+
+  const isFormValid = () => {
+    return !validateName(name) && !validateEmail(email) && !validatePassword(password);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Здесь будет запрос на регистрацию
-    // После регистрации сразу логиним
+
+    // Помечаем все поля как тронутые
+    setNameTouched(true);
+    setEmailTouched(true);
+    setPasswordTouched(true);
+    setSubmitAttempted(true);
+
+    const nameErr = validateName(name);
+    const emailErr = validateEmail(email);
+    const passwordErr = validatePassword(password);
+
+    if (nameErr || emailErr || passwordErr) {
+      setNameError(nameErr);
+      setEmailError(emailErr);
+      setPasswordError(passwordErr);
+      setGeneralError('Упс! Введенные вами данные некорректны. Введите данные корректно и повторите попытку.');
+      return;
+    }
+
+    // Если всё валидно, сбрасываем ошибки и выполняем регистрацию
+    setNameError('');
+    setEmailError('');
+    setPasswordError('');
+    setGeneralError('');
+    setSubmitAttempted(false);
+    // Здесь будет вызов API регистрации, пока имитируем логин
     login(email, password);
     navigate('/');
   };
+
+  // Если после неудачной отправки форма стала валидной, убираем общее сообщение и флаг
+  useEffect(() => {
+    if (submitAttempted && isFormValid()) {
+      setGeneralError('');
+      setSubmitAttempted(false);
+    }
+  }, [name, email, password, submitAttempted, isFormValid]);
+
+  const isButtonDisabled = submitAttempted && !isFormValid();
 
   return (
     <Container>
       <Title>Регистрация</Title>
       <Form onSubmit={handleSubmit}>
-        <Input
-          type="text"
-          placeholder="Имя"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <Input
-          type="email"
-          placeholder="Эл. почта"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <Input
-          type="password"
-          placeholder="Пароль"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <Button type="submit">Зарегистрироваться</Button>
+        <FieldWrapper $hasError={nameError}>
+          <Input
+            type="text"
+            name="name"
+            placeholder="Имя"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              setNameTouched(true);
+            }}
+            $hasError={nameError}
+            $isValid={nameTouched && !nameError && name}
+          />
+        </FieldWrapper>
+        <FieldWrapper $hasError={emailError}>
+          <Input
+            type="email"
+            name="email"
+            placeholder="Эл. почта"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setEmailTouched(true);
+            }}
+            $hasError={emailError}
+            $isValid={emailTouched && !emailError && email}
+          />
+        </FieldWrapper>
+        <FieldWrapper $hasError={passwordError}>
+          <Input
+            type="password"
+            name="password"
+            placeholder="Пароль"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setPasswordTouched(true);
+            }}
+            $hasError={passwordError}
+            $isValid={passwordTouched && !passwordError && password}
+          />
+        </FieldWrapper>
+        {generalError && <ErrorMessage>{generalError}</ErrorMessage>}
+        <SubmitButton type="submit" $disabled={isButtonDisabled}>
+          Зарегистрироваться
+        </SubmitButton>
       </Form>
       <LinkText>
         Уже есть аккаунт? <Link to="/login">Войдите здесь</Link>

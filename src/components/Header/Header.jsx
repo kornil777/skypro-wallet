@@ -1,12 +1,12 @@
-import styled from "styled-components";
-import { NavLink, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import logo from "../../assets/vector.svg";
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import styled from 'styled-components';
+import { useAuth } from '../../context/AuthContext';
+import logo from '../../assets/vector.svg';
 
 const HeaderWrapper = styled.header`
   background-color: #ffffff;
   width: 100%;
-`;
+  `;
 
 const HeaderContent = styled.div`
   max-width: 1440px;
@@ -20,7 +20,9 @@ const HeaderContent = styled.div`
 
 const LogoBlock = styled.div``;
 
-const LogoImg = styled.img``;
+const LogoImg = styled.img`
+  
+`;
 
 const Nav = styled.nav`
   display: flex;
@@ -35,11 +37,10 @@ const StyledNavLink = styled(NavLink)`
   text-align: center;
   text-decoration: none;
   transition: color 0.2s;
-  color: #999999; 
+  color: #999999;
 
   &.active {
-    color: #7334ea; 
-    text-decoration: underline;
+    color: #7334ea;
   }
 
   &:hover {
@@ -50,7 +51,7 @@ const StyledNavLink = styled(NavLink)`
 const LogoutButton = styled.button`
   background: none;
   border: none;
-  font-family: "Montserrat", sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 600;
   font-size: 14px;
   line-height: 170%;
@@ -68,11 +69,15 @@ const LogoutButton = styled.button`
 const Header = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
+
+  // Скрываем навигацию и кнопку выхода на страницах входа и регистрации
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
   return (
     <HeaderWrapper>
@@ -80,15 +85,19 @@ const Header = () => {
         <LogoBlock>
           <LogoImg src={logo} alt="SkyproWallet" />
         </LogoBlock>
-        <Nav>
-          <StyledNavLink to="/" end>
-            Мои расходы
-          </StyledNavLink>
-          <StyledNavLink to="/analysis">
-            Анализ расходов
-          </StyledNavLink>
-        </Nav>
-        <LogoutButton onClick={handleLogout}>Выйти</LogoutButton>
+        {!isAuthPage && (
+          <>
+            <Nav>
+              <StyledNavLink to="/" end>
+                Мои расходы
+              </StyledNavLink>
+              <StyledNavLink to="/analysis">
+                Анализ расходов
+              </StyledNavLink>
+            </Nav>
+            <LogoutButton onClick={handleLogout}>Выйти</LogoutButton>
+          </>
+        )}
       </HeaderContent>
     </HeaderWrapper>
   );

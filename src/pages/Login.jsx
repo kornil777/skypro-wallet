@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAuth } from '../context/AuthContext';
+import { Input, SubmitButton, ErrorMessage } from '../styles/FormStyles';
 
 const Container = styled.div`
   width: 379px;
@@ -25,56 +26,6 @@ const Title = styled.h2`
   margin: 0;
 `;
 
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-`;
-
-const Input = styled.input`
-  width: 313px;
-  height: 39px;
-  padding: 12px;
-  border: 0.5px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  color: #000;
-  box-sizing: border-box;
-  font-family: 'Montserrat', sans-serif;
-
-  &::placeholder {
-    color: #999;
-  }
-
-  &:focus {
-    outline: none;
-    border-color: #7334ea;
-  }
-`;
-
-const Button = styled.button`
-  width: 313px;
-  height: 39px;
-  background-color: #7334ea;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 12px;
-  font-size: 12px;
-  cursor: pointer;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 600;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: #5b2ab5;
-  }
-`;
-
 const LinkText = styled.p`
   font-family: 'Montserrat', sans-serif;
   font-size: 12px;
@@ -94,37 +45,148 @@ const LinkText = styled.p`
   }
 `;
 
+const FieldWrapper = styled.div`
+  position: relative;
+  margin-bottom: 12px;
+
+  ${({ $hasError }) =>
+    $hasError &&
+    `
+      &::after {
+        content: '*';
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #f25050;
+        font-size: 16px;
+        font-weight: bold;
+        pointer-events: none;
+      }
+    `}
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [passwordTouched, setPasswordTouched] = useState(false);
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [generalError, setGeneralError] = useState('');
+
+  const validateEmail = (value) => {
+    if (!value) return 'Поле обязательно для заполнения';
+    const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
+    if (!emailRegex.test(value)) return 'Введите корректный email';
+    return '';
+  };
+
+  const validatePassword = (value) => {
+    if (!value) return 'Поле обязательно для заполнения';
+    return '';
+  };
+
+  // Обновляем ошибку email при изменении, если поле было тронуто или была попытка отправки
+  useEffect(() => {
+    if (emailTouched || submitAttempted) {
+      setEmailError(validateEmail(email));
+    }
+  }, [email, emailTouched, submitAttempted]);
+
+  // Обновляем ошибку пароля при изменении, если поле было тронуто или была попытка отправки
+  useEffect(() => {
+    if (passwordTouched || submitAttempted) {
+      setPasswordError(validatePassword(password));
+    }
+  }, [password, passwordTouched, submitAttempted]);
+
+  const isFormValid = () => {
+    return !validateEmail(email) && !validatePassword(password);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    setEmailTouched(true);
+    setPasswordTouched(true);
+    setSubmitAttempted(true);
+
+    const emailErr = validateEmail(email);
+    const passwordErr = validatePassword(password);
+
+    if (emailErr || passwordErr) {
+      setEmailError(emailErr);
+      setPasswordError(passwordErr);
+      setGeneralError('Упс! Введенные вами данные некорректны. Введите данные корректно и повторите попытку.');
+      return;
+    }
+
+    // Успех — сбрасываем ошибки и выполняем вход
+    setEmailError('');
+    setPasswordError('');
+    setGeneralError('');
+    setSubmitAttempted(false);
     login(email, password);
     navigate('/');
   };
+
+  // Если после неудачной отправки форма стала валидной, снимаем общее сообщение и флаг
+  useEffect(() => {
+    if (submitAttempted && isFormValid()) {
+      setGeneralError('');
+      setSubmitAttempted(false);
+    }
+  }, [email, password, submitAttempted, isFormValid]);
+
+  const isButtonDisabled = submitAttempted && !isFormValid();
 
   return (
     <Container>
       <Title>Вход</Title>
       <Form onSubmit={handleSubmit}>
-        <Input
-          type="email"
-          placeholder="Эл. почта"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <Input
-          type="password"
-          placeholder="Пароль"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <Button type="submit">Войти</Button>
+        <FieldWrapper $hasError={emailError}>
+          <Input
+            type="email"
+            name="email"
+            placeholder="Эл. почта"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setEmailTouched(true);
+            }}
+            $hasError={emailError}
+            $isValid={emailTouched && !emailError && email}
+          />
+        </FieldWrapper>
+        <FieldWrapper $hasError={passwordError}>
+          <Input
+            type="password"
+            name="password"
+            placeholder="Пароль"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setPasswordTouched(true);
+            }}
+            $hasError={passwordError}
+            $isValid={passwordTouched && !passwordError && password}
+          />
+        </FieldWrapper>
+        {generalError && <ErrorMessage>{generalError}</ErrorMessage>}
+        <SubmitButton type="submit" $disabled={isButtonDisabled}>
+          Войти
+        </SubmitButton>
       </Form>
       <LinkText>
         Нужно зарегистрироваться? <Link to="/register">Регистрируйтесь здесь</Link>

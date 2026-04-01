@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import Header from './components/Header/Header';
 import AppRoutes from './routes/AppRoutes';
 import styled from 'styled-components';
+import { GlobalStyles } from './styles/GlobalStyles';
 
 const Main = styled.main`
   max-width: 1440px;
@@ -17,14 +18,17 @@ const Main = styled.main`
 
 function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <Header />
-        <Main>
-          <AppRoutes />
-        </Main>
-      </AuthProvider>
-    </BrowserRouter>
+    <>
+      <GlobalStyles />
+      <BrowserRouter>
+        <AuthProvider>
+          <Header />
+          <Main>
+            <AppRoutes />
+          </Main>
+        </AuthProvider>
+      </BrowserRouter>
+    </>
   );
 }
 
