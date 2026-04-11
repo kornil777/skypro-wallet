@@ -1,0 +1,10 @@
+.main {
+  max-width: 1440px;      /* под размер хедера */
+  margin: 0 auto;
+  padding: 0 20px;
+  min-height: calc(100vh - 64px); /* оставшаяся высота после шапки */
+  display: flex;
+  align-items: center;    /* центрирование по вертикали */
+  justify-content: center; /* центрирование по горизонтали */
+  background-color: #F4F5F6; /* фон всей страницы */
+}
