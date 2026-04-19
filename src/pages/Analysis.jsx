@@ -9,7 +9,10 @@ const Page = styled.div`
   padding: 24px;
   background-color: #f4f5f6;
   min-height: calc(100vh - 64px);
-  padding-top: 36px;
+  @media screen and (max-width: 495px) {
+  background-color: white;
+  padding: 0 0 0 0;
+ }
 `;
 
 const PageTitle = styled.h1`
@@ -19,6 +22,12 @@ const PageTitle = styled.h1`
   line-height: 100%;
   color: #333;
   margin-bottom: 24px;
+  @media screen and (max-width: 495px) {
+  display: none;
+  padding: 24px 0 0 0;
+  font-weight: 700;
+  font-size: 24px;
+ }
 `;
 
 const Container = styled.div`
@@ -35,6 +44,10 @@ const CalendarContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  @media screen and (max-width: 495px) {
+  box-shadow: none;
+  display: block;
+ }
 `;
 
 const CalendarHeader = styled.div`
@@ -42,6 +55,11 @@ const CalendarHeader = styled.div`
   display: flex;
   flex-direction: column;
   row-gap: 24px;
+  @media screen and (max-width: 495px) {
+  box-shadow: none;
+  //display: none;
+  padding: 16px 16px 0 16px;
+ }
 `;
 
 const CalendarTitle = styled.h3`
@@ -50,8 +68,22 @@ const CalendarTitle = styled.h3`
   font-size: 24px;
   line-height: 100%;
   color: #333;
+  @media screen and (max-width: 495px) {
+  display: none;
+ }
 `;
-
+const CalendarTitleNone = styled.h3`
+  display: none;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 100%;
+  color: #333;
+  @media screen and (max-width: 495px) {
+  display: block;
+  padding-left: 10px;
+ }
+`
 const WeekDays = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 40px);
@@ -166,6 +198,12 @@ const StatsContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  @media screen and (max-width: 495px) {
+  display: none;
+  width: 375px;
+  padding: 0;
+  box-shadow: none;
+ }
 `;
 
 const TotalAmount = styled.div`
@@ -175,6 +213,9 @@ const TotalAmount = styled.div`
   line-height: 100%;
   color: #333;
   margin-bottom: 12px;
+  @media screen and (max-width: 495px) {
+  font-size: 20px;
+ }
 `;
 
 const PeriodLabel = styled.div`
@@ -194,6 +235,9 @@ const CategoriesChart = styled.div`
   align-items: flex-end;
   flex: 1;
   min-height: 400px;
+  @media screen and (max-width: 495px) {
+  gap: 6px;
+ }
 `;
 
 const CategoryColumn = styled.div`
@@ -201,6 +245,9 @@ const CategoryColumn = styled.div`
   flex-direction: column;
   align-items: center;
   width: 94px;
+  @media screen and (max-width: 495px) {
+  max-width: 52px;
+ }
 `;
 
 const CategoryTotal = styled.div`
@@ -212,6 +259,9 @@ const CategoryTotal = styled.div`
   margin-bottom: 8px;
   text-align: center;
   white-space: nowrap;
+  @media screen and (max-width: 495px) {
+  font-size: 10px;
+ }
 `;
 
 const Bar = styled.div`
@@ -229,6 +279,11 @@ const CategoryName = styled.div`
   color: #666;
   text-align: center;
   text-transform: capitalize;
+  @media screen and (max-width: 495px) {
+    width: 52px;
+    overflow: hidden;
+    font-size: 10px;
+ }
 `;
 
 const categories = [
@@ -239,7 +294,29 @@ const categories = [
   { name: "образование", color: "#BCEC30" },
   { name: "другое", color: "#FFB9B8" },
 ];
-
+const ChangePeriodContainer = styled.div`
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  padding: 24px 16px;
+  box-shadow: 0px -4px 10px 0px rgba(0, 0, 0, 0.1);
+`
+const ChangePeriodButton = styled.div`
+  width: 100%;
+  background-color: #7334EA;
+  display: flex;
+  justify-content: center;
+  font-size:12px;
+  font-weight:600;
+  color: #ffffff;
+  padding: 16px;
+  border-radius: 6px;
+`
 const Analysis = () => {
   const { user } = useAuth();
   const [expenses, setExpenses] = useState([]);
@@ -386,6 +463,7 @@ const Analysis = () => {
         <CalendarContainer>
           <CalendarHeader>
             <CalendarTitle>Период</CalendarTitle>
+            <CalendarTitleNone>Выбор периода</CalendarTitleNone>
             <WeekDays>
               <span>Пн</span>
               <span>Вт</span>
@@ -440,8 +518,10 @@ const Analysis = () => {
               );
             })}
           </MonthsContainer>
+          <ChangePeriodContainer>
+            <ChangePeriodButton>Выбрать период</ChangePeriodButton>
+          </ChangePeriodContainer>
         </CalendarContainer>
-
         <StatsContainer>
           <TotalAmount>{totalAmount} ₽</TotalAmount>
           <PeriodLabel>{formatPeriod()}</PeriodLabel>

@@ -29,6 +29,10 @@ const Page = styled.div`
   padding: 24px;
   background-color: #f4f5f6;
   min-height: calc(100vh - 64px);
+  @media screen and (max-width: 495px) {
+  background-color: white;
+  padding: 24px 0;
+ }
 `;
 
 const PageTitle = styled.h1`
@@ -38,6 +42,10 @@ const PageTitle = styled.h1`
   line-height: 100%;
   color: #333;
   margin-bottom: 24px;
+  @media screen and (max-width: 495px) {
+  padding-left: 16px;
+   display: none;
+ }
 `;
 
 const Container = styled.div`
@@ -56,6 +64,12 @@ const TableContainer = styled.div`
   flex-direction: column;
   box-sizing: border-box;
   padding-right: 0;
+  @media screen and (max-width: 495px) {
+    width: 375px;
+    padding: 0 16px;
+    box-shadow: none;
+    display: none;
+ }
 `;
 
 const TableTitle = styled.h3`
@@ -66,6 +80,9 @@ const TableTitle = styled.h3`
   color: #333;
   margin-bottom: 16px;
   flex-shrink: 0;
+  @media screen and (max-width: 495px) {
+  display:none;
+ }
 `;
 
 const TableWrapper = styled.div`
@@ -108,8 +125,26 @@ const TableHeader = styled.th`
   position: sticky;
   top: 0;
   z-index: 1;
+  @media screen and (max-width: 495px) {
+  font-size: 10px;
+  font-weight: 400;
+ }
 `;
-
+const TableHeaderNone = styled.th`
+  text-align: left;
+  padding: 12px;
+  font-weight: 600;
+  font-size: 12px;
+  color: #999999;
+  border-bottom: 1px solid #eee;
+  background: white;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  @media screen and (max-width: 495px) {
+  display:none;
+ }
+`;
 const TableRow = styled.tr`
   &:hover {
     background-color: #f9f9f9;
@@ -121,8 +156,20 @@ const TableCell = styled.td`
   border-bottom: 1px solid #f5f5f5;
   font-size: 14px;
   color: #333;
+  @media screen and (max-width: 495px) {
+  font-size: 10px;
+  font-weight: 400;
+ }
 `;
-
+const TableCellNone = styled.td`
+  padding: 12px;
+  border-bottom: 1px solid #f5f5f5;
+  font-size: 14px;
+  color: #333;
+  @media screen and (max-width: 495px) {
+  display:none;
+ }
+`;
 const DeleteIcon = styled(FiTrash2)`
   color: #999;
   cursor: pointer;
@@ -144,6 +191,11 @@ const FormContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  @media screen and (max-width: 495px) {
+  display: block;
+  padding: 0 16px;
+  box-shadow: none;
+ }
 `;
 
 const FormTitle = styled.h2`
@@ -191,6 +243,9 @@ const CategoriesGrid = styled.div`
   gap: 8px;
   width: 313px;
   margin-top: 4px;
+  @media screen and (max-width: 495px) {
+    width: 100%;
+  }
 `;
 
 const CategoryButton = styled.button`
@@ -209,7 +264,9 @@ const CategoryButton = styled.button`
   font-size: 12px;
   line-height: 100%;
   color: #666;
-
+  @media screen and (max-width: 495px) {
+    font-size: 14px;
+  }
   &:hover {
     background: #f1ebfd;
   }
@@ -334,7 +391,7 @@ const ExpensesPage = () => {
                   <TableHeader>Категория</TableHeader>
                   <TableHeader>Дата</TableHeader>
                   <TableHeader>Сумма</TableHeader>
-                  <TableHeader></TableHeader>
+                  <TableHeaderNone></TableHeaderNone>
                 </tr>
               </thead>
               <tbody>
@@ -344,9 +401,9 @@ const ExpensesPage = () => {
                     <TableCell>{exp.category}</TableCell>
                     <TableCell>{exp.date}</TableCell>
                     <TableCell>{exp.amount} ₽</TableCell>
-                    <TableCell>
+                    <TableCellNone>
                       <DeleteIcon onClick={() => handleDelete(exp.id)} />
-                    </TableCell>
+                    </TableCellNone>
                   </TableRow>
                 ))}
               </tbody>

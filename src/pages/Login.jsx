@@ -14,6 +14,9 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
+  @media screen and (max-width: 495px) {
+  box-shadow: none;
+ }
 `;
 
 const Title = styled.h2`

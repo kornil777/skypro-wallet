@@ -14,6 +14,9 @@ const Main = styled.main`
   align-items: center;
   justify-content: center;
   background-color: #f4f5f6;
+  @media screen and (max-width: 495px) {
+  background-color: white;
+ }
 `;
 
 function App() {
