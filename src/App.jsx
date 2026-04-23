@@ -16,6 +16,7 @@ const Main = styled.main`
   background-color: #f4f5f6;
   @media screen and (max-width: 495px) {
   background-color: white;
+  padding: 0;
  }
 `;
 

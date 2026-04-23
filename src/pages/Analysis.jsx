@@ -24,7 +24,7 @@ const PageTitle = styled.h1`
   margin-bottom: 24px;
   @media screen and (max-width: 495px) {
   display: none;
-  padding: 24px 0 0 0;
+  padding: 24px 0 0 16px;
   font-weight: 700;
   font-size: 24px;
  }
@@ -57,8 +57,7 @@ const CalendarHeader = styled.div`
   row-gap: 24px;
   @media screen and (max-width: 495px) {
   box-shadow: none;
-  //display: none;
-  padding: 16px 16px 0 16px;
+  padding: 16px 0;
  }
 `;
 
@@ -81,7 +80,7 @@ const CalendarTitleNone = styled.h3`
   color: #333;
   @media screen and (max-width: 495px) {
   display: block;
-  padding-left: 10px;
+  padding-left: 16px;
  }
 `
 const WeekDays = styled.div`
@@ -114,7 +113,6 @@ const MonthsContainer = styled.div`
   padding: 24px 32px 24px 32px;
   scrollbar-width: thin;
   scrollbar-color: #ccc #f0f0f0;
-
   &::-webkit-scrollbar {
     width: 6px;
   }
@@ -214,7 +212,8 @@ const TotalAmount = styled.div`
   color: #333;
   margin-bottom: 12px;
   @media screen and (max-width: 495px) {
-  font-size: 20px;
+    font-size: 20px;
+    padding-left: 16px; 
  }
 `;
 
@@ -237,6 +236,7 @@ const CategoriesChart = styled.div`
   min-height: 400px;
   @media screen and (max-width: 495px) {
   gap: 6px;
+  padding: 0 16px;
  }
 `;
 
@@ -299,7 +299,7 @@ const ChangePeriodContainer = styled.div`
   position: fixed;
   bottom: 0;
   left: 0;
-  display: none;
+  display: block;
   align-items: center;
   justify-content: center;
   background-color: #ffffff;

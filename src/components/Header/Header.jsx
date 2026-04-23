@@ -20,7 +20,7 @@ const HeaderContent = styled.div`
   justify-content: space-between;
   
   @media screen and (max-width: 495px) {
-  max-width: 495px;
+  max-width: 495pxpx;
   padding: 0 16px;
   margin: 0 auto;
   background-color: #F4F5F6;
@@ -47,6 +47,7 @@ const NavMobile = styled.nav`
   display: none;
   @media screen and (max-width: 495px) {
     display: block;
+    z-index: 10;
     gap:10px;
 }
 `
@@ -119,7 +120,8 @@ const Header = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
+
   const openNav = () => {
     setIsVisible(!isVisible);
   }
