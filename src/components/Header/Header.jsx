@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import logo from '../../assets/vector.svg';
 import treangle from '../../assets/pictureTreangle.png'
 import { useState } from "react";
+import { usePageName } from '/src/context/MenuNavMobileContext';
 
 const HeaderWrapper = styled.header`
   background-color: #ffffff;
@@ -63,7 +64,7 @@ const NavMenu = styled.nav`
   border: 0.5px solid #999999;
   padding: 10px;
 `
-const ItemNav = styled.div`
+const ItemNav = styled(NavLink)`
   height: 26px;
   background-color: #F4F5F6;
   font-weight: 400;
@@ -121,10 +122,17 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isVisible, setIsVisible] = useState(false);
+  const { pageNameInNav, setPageNameInNav } = usePageName("Мои расходы");
+
+  const handleNamePage = (title) => {
+    setPageNameInNav(title);
+    setIsVisible(false); // закрываем меню после выбора
+  };
 
   const openNav = () => {
     setIsVisible(!isVisible);
-  }
+  };
+
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -150,14 +158,32 @@ const Header = () => {
               </StyledNavLink>
             </Nav>
             <NavMobile>
-              <StyledNavLink onClick={openNav}>Мои расходы</StyledNavLink>
+              <StyledNavLink onClick={openNav}>
+                {pageNameInNav}
+              </StyledNavLink>
               <img src={treangle} alt="SkyproWallet" />
-              {isVisible ? 
-              <NavMenu>
-                <ItemNav>Мои расходы</ItemNav>
-                <ItemNav>Новый расход</ItemNav>
-                <ItemNav>Анализ расходов</ItemNav>
-              </NavMenu> : ''}
+              {isVisible && (
+                <NavMenu>
+                  <ItemNav
+                    onClick={() => handleNamePage('Мои расходы')}
+                    to="/myExpenses"
+                  >
+                    Мои расходы
+                  </ItemNav>
+                  <ItemNav
+                    onClick={() => handleNamePage('Новый расход')}
+                    to="/newExpenses"
+                  >
+                    Новый расход
+                  </ItemNav>
+                  <ItemNav
+                    onClick={() => handleNamePage('Анализ расходов')}
+                    to="/analysis"
+                  >
+                    Анализ расходов
+                  </ItemNav>
+                </NavMenu>
+              )}
             </NavMobile>
             <LogoutButton onClick={handleLogout}>Выйти</LogoutButton>
           </>

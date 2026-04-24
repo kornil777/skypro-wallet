@@ -2,7 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { getExpenses } from "../api/expensesApi";
 import { useAuth } from "../context/AuthContext";
-
+import iconAE from "../assets/iconAnalysExpenses.png"
+import { NavLink } from "react-router-dom";
+import { usePageName } from '/src/context/MenuNavMobileContext';
 const Page = styled.div`
   max-width: 1440px;
   margin: 0 auto;
@@ -225,6 +227,9 @@ const PeriodLabel = styled.div`
   color: #999;
   margin-bottom: 24px;
   text-transform: capitalize;
+   @media screen and (max-width: 495px) {
+    padding-left: 16px; 
+ }
 `;
 
 const CategoriesChart = styled.div`
@@ -299,7 +304,16 @@ const ChangePeriodContainer = styled.div`
   position: fixed;
   bottom: 0;
   left: 0;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  padding: 24px 16px;
+  box-shadow: 0px -4px 10px 0px rgba(0, 0, 0, 0.1);
+`
+const ChangePeriodContainerStats = styled.div`
+  width: 100%;
+  display: flex;
   align-items: center;
   justify-content: center;
   background-color: #ffffff;
@@ -317,12 +331,22 @@ const ChangePeriodButton = styled.div`
   padding: 16px;
   border-radius: 6px;
 `
+const LogoImg = styled.img`
+  @media screen and (max-width: 495px) {
+  width:140px;
+  height:18px;
+  padding-left: 16px;
+}
+`;
+
 const Analysis = () => {
   const { user } = useAuth();
   const [expenses, setExpenses] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isSelectingPeriod, setIsSelectingPeriod] = useState(true); // Новое состояние
+  const { setPageNameInNav } = usePageName();
 
   const baseDate = new Date();
   const currentYear = baseDate.getFullYear();
@@ -334,6 +358,7 @@ const Analysis = () => {
   const scrollContainerRef = useRef(null);
 
   useEffect(() => {
+    setPageNameInNav("Анализ расходов")
     const loadExpenses = async () => {
       if (!user) return;
       const data = await getExpenses();
@@ -360,6 +385,15 @@ const Analysis = () => {
     }, 50);
     return () => clearTimeout(timer);
   }, [baseDate]);
+  
+   const handleSelectPeriod = () => {
+    setIsSelectingPeriod(false);
+  };
+
+  const handleChooseAnotherPeriod = () => {
+    setIsSelectingPeriod(true);
+  };
+
 
   const getExpensesForPeriod = () => {
     if (!startDate) return [];
@@ -458,11 +492,14 @@ const Analysis = () => {
 
   return (
     <Page>
-      <PageTitle>Анализ расходов</PageTitle>
+      <PageTitle style={{ display: isSelectingPeriod ? 'none' : 'block' }}>
+        Анализ расходов
+      </PageTitle>
       <Container>
-        <CalendarContainer>
+        <CalendarContainer style={{ display: isSelectingPeriod ? 'block' : 'none' }}>
           <CalendarHeader>
             <CalendarTitle>Период</CalendarTitle>
+            <LogoImg onClick={handleSelectPeriod} style={{ display: isSelectingPeriod ? 'block' : 'none' }} src={iconAE} alt="SkyproWallet" />
             <CalendarTitleNone>Выбор периода</CalendarTitleNone>
             <WeekDays>
               <span>Пн</span>
@@ -519,10 +556,12 @@ const Analysis = () => {
             })}
           </MonthsContainer>
           <ChangePeriodContainer>
-            <ChangePeriodButton>Выбрать период</ChangePeriodButton>
+            <ChangePeriodButton onClick={handleSelectPeriod} style={{ display: isSelectingPeriod ? 'flex' : 'none' }}>
+              Выбрать период
+            </ChangePeriodButton>
           </ChangePeriodContainer>
         </CalendarContainer>
-        <StatsContainer>
+        <StatsContainer style={{ display: isSelectingPeriod ? 'none' : 'block' }}>
           <TotalAmount>{totalAmount} ₽</TotalAmount>
           <PeriodLabel>{formatPeriod()}</PeriodLabel>
           <CategoriesChart>
@@ -539,6 +578,11 @@ const Analysis = () => {
               </CategoryColumn>
             ))}
           </CategoriesChart>
+          <ChangePeriodContainerStats style={{ display: isSelectingPeriod ? 'none' : 'block' }}>
+          <ChangePeriodButton onClick={handleChooseAnotherPeriod}>
+            Выбрать другой период
+          </ChangePeriodButton>
+        </ChangePeriodContainerStats>
         </StatsContainer>
       </Container>
     </Page>

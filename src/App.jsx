@@ -4,7 +4,7 @@ import Header from './components/Header/Header';
 import AppRoutes from './routes/AppRoutes';
 import styled from 'styled-components';
 import { GlobalStyles } from './styles/GlobalStyles';
-
+import { PageNameProvider } from '../src/context/MenuNavMobileContext';
 const Main = styled.main`
   max-width: 1440px;
   margin: 0 auto;
@@ -26,10 +26,12 @@ function App() {
       <GlobalStyles />
       <BrowserRouter>
         <AuthProvider>
-          <Header />
-          <Main>
-            <AppRoutes />
-          </Main>
+          <PageNameProvider>
+            <Header />
+            <Main>
+              <AppRoutes />
+            </Main>
+          </PageNameProvider>
         </AuthProvider>
       </BrowserRouter>
     </>

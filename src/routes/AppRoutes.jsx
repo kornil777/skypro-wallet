@@ -5,6 +5,8 @@ import ExpensesPage from '../pages/ExpensesPage';
 import Analysis from '../pages/Analysis';
 import NotFound from '../pages/NotFound';
 import ProtectedRoute from '../components/ProtectedRoute';
+import ExpensesPageMobile from '../pages/ExpensesPageMobile';
+import CreateNewExpenses from '../pages/CreateNewExpenses';
 
 const AppRoutes = () => {
   return (
@@ -16,6 +18,22 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <ExpensesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/myExpenses"
+        element={
+          <ProtectedRoute>
+            <ExpensesPageMobile />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/newExpenses"
+        element={
+          <ProtectedRoute>
+            <CreateNewExpenses />
           </ProtectedRoute>
         }
       />
