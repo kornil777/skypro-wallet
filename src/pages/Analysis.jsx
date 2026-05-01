@@ -2,14 +2,19 @@ import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { getExpenses } from "../api/expensesApi";
 import { useAuth } from "../context/AuthContext";
-
+import iconAE from "../assets/iconAnalysExpenses.png"
+import { NavLink } from "react-router-dom";
+import { usePageName } from '/src/context/MenuNavMobileContext';
 const Page = styled.div`
   max-width: 1440px;
   margin: 0 auto;
   padding: 24px;
   background-color: #f4f5f6;
   min-height: calc(100vh - 64px);
-  padding-top: 36px;
+  @media screen and (max-width: 495px) {
+  background-color: white;
+  padding: 0 0 0 0;
+ }
 `;
 
 const PageTitle = styled.h1`
@@ -19,6 +24,12 @@ const PageTitle = styled.h1`
   line-height: 100%;
   color: #333;
   margin-bottom: 24px;
+  @media screen and (max-width: 495px) {
+  display: none;
+  padding: 24px 0 0 16px;
+  font-weight: 700;
+  font-size: 24px;
+ }
 `;
 
 const Container = styled.div`
@@ -35,6 +46,10 @@ const CalendarContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  @media screen and (max-width: 495px) {
+  box-shadow: none;
+  display: block;
+ }
 `;
 
 const CalendarHeader = styled.div`
@@ -42,6 +57,10 @@ const CalendarHeader = styled.div`
   display: flex;
   flex-direction: column;
   row-gap: 24px;
+  @media screen and (max-width: 495px) {
+  box-shadow: none;
+  padding: 16px 0;
+ }
 `;
 
 const CalendarTitle = styled.h3`
@@ -50,8 +69,22 @@ const CalendarTitle = styled.h3`
   font-size: 24px;
   line-height: 100%;
   color: #333;
+  @media screen and (max-width: 495px) {
+  display: none;
+ }
 `;
-
+const CalendarTitleNone = styled.h3`
+  display: none;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 100%;
+  color: #333;
+  @media screen and (max-width: 495px) {
+  display: block;
+  padding-left: 16px;
+ }
+`
 const WeekDays = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 40px);
@@ -82,7 +115,6 @@ const MonthsContainer = styled.div`
   padding: 24px 32px 24px 32px;
   scrollbar-width: thin;
   scrollbar-color: #ccc #f0f0f0;
-
   &::-webkit-scrollbar {
     width: 6px;
   }
@@ -166,6 +198,12 @@ const StatsContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  @media screen and (max-width: 495px) {
+  display: none;
+  width: 375px;
+  padding: 0;
+  box-shadow: none;
+ }
 `;
 
 const TotalAmount = styled.div`
@@ -175,6 +213,10 @@ const TotalAmount = styled.div`
   line-height: 100%;
   color: #333;
   margin-bottom: 12px;
+  @media screen and (max-width: 495px) {
+    font-size: 20px;
+    padding-left: 16px; 
+ }
 `;
 
 const PeriodLabel = styled.div`
@@ -185,6 +227,9 @@ const PeriodLabel = styled.div`
   color: #999;
   margin-bottom: 24px;
   text-transform: capitalize;
+   @media screen and (max-width: 495px) {
+    padding-left: 16px; 
+ }
 `;
 
 const CategoriesChart = styled.div`
@@ -194,6 +239,10 @@ const CategoriesChart = styled.div`
   align-items: flex-end;
   flex: 1;
   min-height: 400px;
+  @media screen and (max-width: 495px) {
+  gap: 6px;
+  padding: 0 16px;
+ }
 `;
 
 const CategoryColumn = styled.div`
@@ -201,6 +250,9 @@ const CategoryColumn = styled.div`
   flex-direction: column;
   align-items: center;
   width: 94px;
+  @media screen and (max-width: 495px) {
+  max-width: 52px;
+ }
 `;
 
 const CategoryTotal = styled.div`
@@ -212,6 +264,9 @@ const CategoryTotal = styled.div`
   margin-bottom: 8px;
   text-align: center;
   white-space: nowrap;
+  @media screen and (max-width: 495px) {
+  font-size: 10px;
+ }
 `;
 
 const Bar = styled.div`
@@ -229,6 +284,11 @@ const CategoryName = styled.div`
   color: #666;
   text-align: center;
   text-transform: capitalize;
+  @media screen and (max-width: 495px) {
+    width: 52px;
+    overflow: hidden;
+    font-size: 10px;
+ }
 `;
 
 const categories = [
@@ -239,6 +299,45 @@ const categories = [
   { name: "образование", color: "#BCEC30" },
   { name: "другое", color: "#FFB9B8" },
 ];
+const ChangePeriodContainer = styled.div`
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  padding: 24px 16px;
+  box-shadow: 0px -4px 10px 0px rgba(0, 0, 0, 0.1);
+`
+const ChangePeriodContainerStats = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  padding: 24px 16px;
+  box-shadow: 0px -4px 10px 0px rgba(0, 0, 0, 0.1);
+`
+const ChangePeriodButton = styled.div`
+  width: 100%;
+  background-color: #7334EA;
+  display: flex;
+  justify-content: center;
+  font-size:12px;
+  font-weight:600;
+  color: #ffffff;
+  padding: 16px;
+  border-radius: 6px;
+`
+const LogoImg = styled.img`
+  @media screen and (max-width: 495px) {
+  width:140px;
+  height:18px;
+  padding-left: 16px;
+}
+`;
 
 const Analysis = () => {
   const { user } = useAuth();
@@ -246,6 +345,8 @@ const Analysis = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isSelectingPeriod, setIsSelectingPeriod] = useState(true); // Новое состояние
+  const { setPageNameInNav } = usePageName();
 
   const baseDate = new Date();
   const currentYear = baseDate.getFullYear();
@@ -257,6 +358,7 @@ const Analysis = () => {
   const scrollContainerRef = useRef(null);
 
   useEffect(() => {
+    setPageNameInNav("Анализ расходов")
     const loadExpenses = async () => {
       if (!user) return;
       const data = await getExpenses();
@@ -283,6 +385,15 @@ const Analysis = () => {
     }, 50);
     return () => clearTimeout(timer);
   }, [baseDate]);
+  
+   const handleSelectPeriod = () => {
+    setIsSelectingPeriod(false);
+  };
+
+  const handleChooseAnotherPeriod = () => {
+    setIsSelectingPeriod(true);
+  };
+
 
   const getExpensesForPeriod = () => {
     if (!startDate) return [];
@@ -381,11 +492,15 @@ const Analysis = () => {
 
   return (
     <Page>
-      <PageTitle>Анализ расходов</PageTitle>
+      <PageTitle style={{ display: isSelectingPeriod ? 'none' : 'block' }}>
+        Анализ расходов
+      </PageTitle>
       <Container>
-        <CalendarContainer>
+        <CalendarContainer style={{ display: isSelectingPeriod ? 'block' : 'none' }}>
           <CalendarHeader>
             <CalendarTitle>Период</CalendarTitle>
+            <LogoImg onClick={handleSelectPeriod} style={{ display: isSelectingPeriod ? 'block' : 'none' }} src={iconAE} alt="SkyproWallet" />
+            <CalendarTitleNone>Выбор периода</CalendarTitleNone>
             <WeekDays>
               <span>Пн</span>
               <span>Вт</span>
@@ -440,9 +555,13 @@ const Analysis = () => {
               );
             })}
           </MonthsContainer>
+          <ChangePeriodContainer>
+            <ChangePeriodButton onClick={handleSelectPeriod} style={{ display: isSelectingPeriod ? 'flex' : 'none' }}>
+              Выбрать период
+            </ChangePeriodButton>
+          </ChangePeriodContainer>
         </CalendarContainer>
-
-        <StatsContainer>
+        <StatsContainer style={{ display: isSelectingPeriod ? 'none' : 'block' }}>
           <TotalAmount>{totalAmount} ₽</TotalAmount>
           <PeriodLabel>{formatPeriod()}</PeriodLabel>
           <CategoriesChart>
@@ -459,6 +578,11 @@ const Analysis = () => {
               </CategoryColumn>
             ))}
           </CategoriesChart>
+          <ChangePeriodContainerStats style={{ display: isSelectingPeriod ? 'none' : 'block' }}>
+          <ChangePeriodButton onClick={handleChooseAnotherPeriod}>
+            Выбрать другой период
+          </ChangePeriodButton>
+        </ChangePeriodContainerStats>
         </StatsContainer>
       </Container>
     </Page>

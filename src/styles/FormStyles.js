@@ -21,7 +21,9 @@ export const Input = styled.input`
   background-color: ${({ $hasError }) => ($hasError ? '#FFEBEB' : 'white')};
   border-color: ${({ $hasError }) => ($hasError ? '#F25050' : '#ccc')};
   
-
+  @media screen and (max-width: 495px) {
+    width: 100%;
+  }
   &::placeholder {
     color: #999;
   }
@@ -94,7 +96,9 @@ export const SubmitButton = styled.button`
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
   transition: background-color 0.2s;
-
+  @media screen and (max-width: 495px) {
+    width: 100%;
+  }
   &:hover {
     background-color: ${({ $disabled }) => ($disabled ? '#999999' : '#5b2ab5')};
   }
