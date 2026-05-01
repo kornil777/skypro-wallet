@@ -1,0 +1,248 @@
+.page {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px;
+  background-color: #f4f5f6;
+  min-height: calc(100vh - 64px);
+}
+
+.pageTitle {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 100%;
+  color: #333;
+  margin-bottom: 24px;
+}
+
+.container {
+  display: flex;
+  gap: 34px;
+}
+
+/* Левая часть (таблица) — фиксированные размеры и прокрутка */
+.tableContainer {
+  width: 789px;
+  height: 618px;
+  background: white;
+  border-radius: 30px;
+  padding: 20px;
+  box-shadow: 0px 20px 67px -12px rgba(0, 0, 0, 0.21);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding-right: 0;
+}
+
+.tableTitle {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 100%;
+  color: #333;
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+
+.tableWrapper {
+  flex: 1;
+  overflow-y: auto; /* прокрутка по вертикали */
+  border-radius: 8px;
+  /* Стилизация скроллбара (опционально) */
+  scrollbar-width: thin;
+  scrollbar-color: #ccc #f0f0f0;
+}
+
+.tableWrapper::-webkit-scrollbar {
+  width: 6px;
+}
+.tableWrapper::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 10px;
+}
+.tableWrapper::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+.tableWrapper::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Montserrat", sans-serif;
+}
+
+.table th {
+  text-align: left;
+  padding: 12px;
+  font-weight: 600;
+  font-size: 12px;
+  color: #999999;
+  border-bottom: 1px solid #eee;
+  background: white; /* фиксируем фон при прокрутке */
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid #f5f5f5;
+  font-size: 14px;
+  color: #333;
+}
+
+.deleteIcon {
+  color: #999;
+  cursor: pointer;
+  font-size: 18px;
+  transition: color 0.2s;
+}
+
+.deleteIcon:hover {
+  color: #7334ea;
+}
+
+/* Правая часть (форма) — без изменений, только добавим placeholder для даты */
+.formContainer {
+  width: 379px;
+  height: 618px;
+  background: white;
+  border-radius: 30px;
+  padding: 24px 33px;
+  box-shadow: 0px 20px 67px -12px rgba(0, 0, 0, 0.21);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.formTitle {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 100%;
+  margin-bottom: 24px;
+  color: #333;
+}
+
+.field {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+}
+
+.label {
+  display: block;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 100%;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.input {
+  width: 313px;
+  height: 39px;
+  padding: 12px;
+  border: 0.5px solid #ccc;
+  border-radius: 6px;
+  color: #000;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  
+}
+
+.input::placeholder {
+  color: #999;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #7334ea;
+  background-color: #f1ebfd;
+}
+
+/* Категории */
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 313px;
+}
+
+.categoryBtn {
+  row-gap: 6px;
+  display: flex;
+  flex-direction: row;
+  column-gap: 4px;
+  justify-content: center;
+  height: 31px;
+  background: #f4f5f6;
+  border: none;
+  border-radius: 30px;
+  padding: 8px 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 100%;
+  text-align: center;
+  color: #666;
+  align-items: center;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.categoryBtn:hover {
+  background: #f1ebfd;
+}
+
+.categoryBtnActive {
+  background: #f1ebfd;
+  color: #7334ea;
+}
+
+.categoryBtnActive .categoryIcon {
+  color: #7334ea;
+  background-color: #f1ebfd;
+}
+
+.categoryIcon {
+  font-size: 20px;
+  margin-bottom: 4px;
+  color: #666;
+}
+
+.categoryName {
+  text-transform: capitalize;
+  font-weight: 400;
+}
+
+/* Кнопка добавления */
+.addBtn {
+  width: 313px;
+  height: 39px;
+  background-color: #7334ea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 12px;
+  cursor: pointer;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+}
+
+.addBtn:hover {
+  background-color: #5b2ab5;
+}
