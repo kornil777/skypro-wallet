@@ -108,6 +108,7 @@ const Divider = styled.hr`
 
 const MonthsContainer = styled.div`
   flex: 1;
+  height: 416px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -300,25 +301,36 @@ const categories = [
   { name: "другое", color: "#FFB9B8" },
 ];
 const ChangePeriodContainer = styled.div`
-  width: 100%;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #ffffff;
-  padding: 24px 16px;
-  box-shadow: 0px -4px 10px 0px rgba(0, 0, 0, 0.1);
+  display: none;
+  @media screen and (max-width: 495px) {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    padding: 24px 16px;
+    box-shadow: 0px -4px 10px 0px rgba(0, 0, 0, 0.1);
+  }
+  
 `
 const ChangePeriodContainerStats = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #ffffff;
-  padding: 24px 16px;
-  box-shadow: 0px -4px 10px 0px rgba(0, 0, 0, 0.1);
+  display: none;
+  @media screen and (max-width: 495px) {
+  
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    padding: 24px 16px;
+    box-shadow: 0px -4px 10px 0px rgba(0, 0, 0, 0.1);
+  }
 `
 const ChangePeriodButton = styled.div`
   width: 100%;
@@ -328,25 +340,56 @@ const ChangePeriodButton = styled.div`
   font-size:12px;
   font-weight:600;
   color: #ffffff;
-  padding: 16px;
+  padding: 10px 16px;
   border-radius: 6px;
+  @media screen and (max-width: 495px) {
+  display: block;
+  width: 100%;
+  background-color: #7334EA;
+  display: flex;
+  justify-content: center;
+  font-size:12px;
+  font-weight:600;
+  color: #ffffff;
+  padding: 10px 16px;
+  border-radius: 6px;
+}
 `
 const LogoImg = styled.img`
+  display: none;
   @media screen and (max-width: 495px) {
   width:140px;
   height:18px;
   padding-left: 16px;
+  display: block;
 }
 `;
 
+const useIsMobile = (breakpoint) => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < breakpoint);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < breakpoint);
+    };
+
+    window.addEventListener('resize', handleResize);
+    // Проверяем сразу после монтирования
+    handleResize();
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, [breakpoint]);
+  console.log(isMobile);
+  return isMobile;
+};
 const Analysis = () => {
   const { user } = useAuth();
   const [expenses, setExpenses] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isSelectingPeriod, setIsSelectingPeriod] = useState(true); // Новое состояние
+  const [isSelectingPeriod, setIsSelectingPeriod] = useState(true);
   const { setPageNameInNav } = usePageName();
+  const isMobile = useIsMobile(700);
 
   const baseDate = new Date();
   const currentYear = baseDate.getFullYear();
@@ -393,7 +436,6 @@ const Analysis = () => {
   const handleChooseAnotherPeriod = () => {
     setIsSelectingPeriod(true);
   };
-
 
   const getExpensesForPeriod = () => {
     if (!startDate) return [];
@@ -496,10 +538,10 @@ const Analysis = () => {
         Анализ расходов
       </PageTitle>
       <Container>
-        <CalendarContainer style={{ display: isSelectingPeriod ? 'block' : 'none' }}>
+        <CalendarContainer style={{ display: (isSelectingPeriod || !isMobile) ? 'block' : 'none' }}>
           <CalendarHeader>
             <CalendarTitle>Период</CalendarTitle>
-            <LogoImg onClick={handleSelectPeriod} style={{ display: isSelectingPeriod ? 'block' : 'none' }} src={iconAE} alt="SkyproWallet" />
+            <LogoImg onClick={handleSelectPeriod} src={iconAE} alt="SkyproWallet" />
             <CalendarTitleNone>Выбор периода</CalendarTitleNone>
             <WeekDays>
               <span>Пн</span>
@@ -556,12 +598,12 @@ const Analysis = () => {
             })}
           </MonthsContainer>
           <ChangePeriodContainer>
-            <ChangePeriodButton onClick={handleSelectPeriod} style={{ display: isSelectingPeriod ? 'flex' : 'none' }}>
+            <ChangePeriodButton onClick={handleSelectPeriod}>
               Выбрать период
             </ChangePeriodButton>
           </ChangePeriodContainer>
         </CalendarContainer>
-        <StatsContainer style={{ display: isSelectingPeriod ? 'none' : 'block' }}>
+        <StatsContainer style={{ display: (!isSelectingPeriod || !isMobile) ? 'block' : 'none' }}>
           <TotalAmount>{totalAmount} ₽</TotalAmount>
           <PeriodLabel>{formatPeriod()}</PeriodLabel>
           <CategoriesChart>
@@ -578,11 +620,11 @@ const Analysis = () => {
               </CategoryColumn>
             ))}
           </CategoriesChart>
-          <ChangePeriodContainerStats style={{ display: isSelectingPeriod ? 'none' : 'block' }}>
-          <ChangePeriodButton onClick={handleChooseAnotherPeriod}>
-            Выбрать другой период
-          </ChangePeriodButton>
-        </ChangePeriodContainerStats>
+          <ChangePeriodContainerStats>
+            <ChangePeriodButton onClick={handleChooseAnotherPeriod}>
+              Выбрать другой период
+            </ChangePeriodButton>
+          </ChangePeriodContainerStats>
         </StatsContainer>
       </Container>
     </Page>
