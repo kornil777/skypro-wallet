@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { FiTrash2 } from "react-icons/fi";
+import ConfirmModal from "../components/ConfirmModal/ConfirmModal";
 import {
   FaUtensils,
   FaHome,
@@ -304,6 +305,8 @@ const ExpensesPage = () => {
   const [expenses, setExpenses] = useState([]);
   const [isSubmitFailed, setIsSubmitFailed] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [expenseToDelete, setExpenseToDelete] = useState(null);
 
   const {
     values,
@@ -358,11 +361,23 @@ const ExpensesPage = () => {
     setIsSubmitFailed(false);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Удалить расход?")) {
-      await deleteExpense(id);
-      setExpenses(expenses.filter((exp) => exp.id !== id));
+  const handleDelete = (id) => {
+    setExpenseToDelete(id);
+    setModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (expenseToDelete) {
+      await deleteExpense(expenseToDelete);
+      setExpenses(expenses.filter((exp) => exp.id !== expenseToDelete));
+      setModalOpen(false);
+      setExpenseToDelete(null);
     }
+  };
+
+  const cancelDelete = () => {
+    setModalOpen(false);
+    setExpenseToDelete(null);
   };
 
   const isButtonDisabled = isSubmitFailed;
@@ -487,6 +502,14 @@ const ExpensesPage = () => {
           </Form>
         </FormContainer>
       </Container>
+
+      <ConfirmModal
+        isOpen={modalOpen}
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+        title="Удаление расхода"
+        message="Вы уверены, что хотите удалить этот расход? Отменить действие будет невозможно."
+      />
     </Page>
   );
 };

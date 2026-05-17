@@ -3,6 +3,7 @@ import ExpenseItem from './ExpenseItem';
 import EditExpenseForm from './EditExpenseForm';
 import CalendarView from '../Calendar/CalendarView';
 import styles from './Expenses.module.css';
+import ConfirmModal from '../ConfirmModal/ConfirmModal';
 
 // Моковые данные
 const mockExpenses = [
@@ -67,14 +68,29 @@ const Expenses = () => {
   const handleCancelEdit = () => {
     setEditingId(null);
   };
+   const [modalOpen, setModalOpen] = useState(false);
+  const [expenseToDelete, setExpenseToDelete] = useState(null);
 
   // Удаление
-  const handleDelete = (id) => {
-    if (window.confirm('Удалить расход?')) {
-      setExpenses(expenses.filter(exp => exp.id !== id));
-      if (selectedId === id) setSelectedId(null);
+   const handleDelete = (id) => {
+    setExpenseToDelete(id);
+    setModalOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (expenseToDelete) {
+      setExpenses(expenses.filter(exp => exp.id !== expenseToDelete));
+      if (selectedId === expenseToDelete) setSelectedId(null);
+      setModalOpen(false);
+      setExpenseToDelete(null);
     }
   };
+
+  const cancelDelete = () => {
+    setModalOpen(false);
+    setExpenseToDelete(null);
+  };
+
 
   // Выбор элемента (подсветка)
   const handleSelect = (id) => {
@@ -171,6 +187,14 @@ const Expenses = () => {
       >
         + Добавить расход
       </button>
+      
+     <ConfirmModal
+        isOpen={modalOpen}
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+        title="Удаление расхода"
+        message="Вы уверены, что хотите удалить этот расход? Отменить действие будет невозможно."
+      />
     </div>
   );
 };
