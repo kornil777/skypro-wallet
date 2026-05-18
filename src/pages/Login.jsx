@@ -83,9 +83,11 @@ const Login = () => {
   const [generalError, setGeneralError] = useState("");
 
   const validateLogin = (value) => {
-    if (!value) return "Поле обязательно для заполнения";
-    return "";
-  };
+  if (!value) return "Введите email";
+  const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
+  if (!emailRegex.test(value)) return "Введите корректный email";
+  return "";
+};
 
   const validatePassword = (value) => {
     if (!value) return "Поле обязательно для заполнения";

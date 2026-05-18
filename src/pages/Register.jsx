@@ -90,9 +90,11 @@ const Register = () => {
     return "";
   };
   const validateLogin = (value) => {
-    if (!value) return "Введите логин";
-    return "";
-  };
+  if (!value) return "Введите email";
+  const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
+  if (!emailRegex.test(value)) return "Введите корректный email";
+  return "";
+};
   const validatePassword = (value) => {
     if (!value) return "Введите пароль";
     if (value.length < 6) return "Пароль должен содержать не менее 6 символов";
