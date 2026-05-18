@@ -33,12 +33,10 @@ const LinkText = styled.p`
   text-align: center;
   display: flex;
   flex-direction: column;
-
   a {
     color: #999999;
     text-decoration: underline;
     font-weight: 500;
-
     &:hover {
       text-decoration: underline;
     }
@@ -48,7 +46,6 @@ const LinkText = styled.p`
 const FieldWrapper = styled.div`
   position: relative;
   margin-bottom: 12px;
-
   ${({ $hasError }) =>
     $hasError &&
     `
@@ -77,17 +74,14 @@ const Register = () => {
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
-
   const [nameTouched, setNameTouched] = useState(false);
-  const [emailTouched, setEmailTouched] = useState(false);
+  const [loginTouched, setLoginTouched] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
-
   const [nameError, setNameError] = useState("");
-  const [emailError, setEmailError] = useState("");
+  const [loginError, setLoginError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [generalError, setGeneralError] = useState("");
 
@@ -95,14 +89,10 @@ const Register = () => {
     if (!value) return "Введите имя";
     return "";
   };
-
-  const validateEmail = (value) => {
-    if (!value) return "Введите email";
-    const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
-    if (!emailRegex.test(value)) return "Введите корректный email";
+  const validateLogin = (value) => {
+    if (!value) return "Введите логин";
     return "";
   };
-
   const validatePassword = (value) => {
     if (!value) return "Введите пароль";
     if (value.length < 6) return "Пароль должен содержать не менее 6 символов";
@@ -110,46 +100,33 @@ const Register = () => {
   };
 
   useEffect(() => {
-    if (nameTouched || submitAttempted) {
-      setNameError(validateName(name));
-    }
+    if (nameTouched || submitAttempted) setNameError(validateName(name));
   }, [name, nameTouched, submitAttempted]);
-
   useEffect(() => {
-    if (emailTouched || submitAttempted) {
-      setEmailError(validateEmail(email));
-    }
-  }, [email, emailTouched, submitAttempted]);
-
+    if (loginTouched || submitAttempted) setLoginError(validateLogin(login));
+  }, [login, loginTouched, submitAttempted]);
   useEffect(() => {
-    if (passwordTouched || submitAttempted) {
-      setPasswordError(validatePassword(password));
-    }
+    if (passwordTouched || submitAttempted) setPasswordError(validatePassword(password));
   }, [password, passwordTouched, submitAttempted]);
 
   const isFormValid = () => {
-    return (
-      !validateName(name) &&
-      !validateEmail(email) &&
-      !validatePassword(password)
-    );
+    return !validateName(name) && !validateLogin(login) && !validatePassword(password);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     setNameTouched(true);
-    setEmailTouched(true);
+    setLoginTouched(true);
     setPasswordTouched(true);
     setSubmitAttempted(true);
 
     const nameErr = validateName(name);
-    const emailErr = validateEmail(email);
+    const loginErr = validateLogin(login);
     const passwordErr = validatePassword(password);
 
-    if (nameErr || emailErr || passwordErr) {
+    if (nameErr || loginErr || passwordErr) {
       setNameError(nameErr);
-      setEmailError(emailErr);
+      setLoginError(loginErr);
       setPasswordError(passwordErr);
       setGeneralError(
         "Упс! Введенные вами данные некорректны. Введите данные корректно и повторите попытку."
@@ -157,7 +134,7 @@ const Register = () => {
       return;
     }
 
-    const result = register(email, password, name);
+    const result = await register(login, password, name);
     if (!result.success) {
       setGeneralError(result.error);
       setSubmitAttempted(false);
@@ -173,7 +150,7 @@ const Register = () => {
     if (submitAttempted && isFormValid()) {
       setGeneralError("");
     }
-  }, [name, email, password, submitAttempted, isFormValid]);
+  }, [name, login, password, submitAttempted, isFormValid]);
 
   const isButtonDisabled = submitAttempted && !isFormValid();
 
@@ -195,18 +172,18 @@ const Register = () => {
             $isValid={nameTouched && !nameError && name}
           />
         </FieldWrapper>
-        <FieldWrapper $hasError={emailError}>
+        <FieldWrapper $hasError={loginError}>
           <Input
-            type="email"
-            name="email"
-            placeholder="Эл. почта"
-            value={email}
+            type="text"
+            name="login"
+            placeholder="Логин"
+            value={login}
             onChange={(e) => {
-              setEmail(e.target.value);
-              setEmailTouched(true);
+              setLogin(e.target.value);
+              setLoginTouched(true);
             }}
-            $hasError={emailError}
-            $isValid={emailTouched && !emailError && email}
+            $hasError={loginError}
+            $isValid={loginTouched && !loginError && login}
           />
         </FieldWrapper>
         <FieldWrapper $hasError={passwordError}>

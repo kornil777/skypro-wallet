@@ -33,12 +33,10 @@ const LinkText = styled.p`
   text-align: center;
   display: flex;
   flex-direction: column;
-
   a {
     color: #999999;
     text-decoration: underline;
     font-weight: 500;
-
     &:hover {
       text-decoration: underline;
     }
@@ -48,7 +46,6 @@ const LinkText = styled.p`
 const FieldWrapper = styled.div`
   position: relative;
   margin-bottom: 12px;
-
   ${({ $hasError }) =>
     $hasError &&
     `
@@ -76,19 +73,17 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
+  const [loginValue, setLoginValue] = useState("");
   const [password, setPassword] = useState("");
-  const [emailTouched, setEmailTouched] = useState(false);
+  const [loginTouched, setLoginTouched] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
-  const [emailError, setEmailError] = useState("");
+  const [loginError, setLoginError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [generalError, setGeneralError] = useState("");
 
-  const validateEmail = (value) => {
+  const validateLogin = (value) => {
     if (!value) return "Поле обязательно для заполнения";
-    const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
-    if (!emailRegex.test(value)) return "Введите корректный email";
     return "";
   };
 
@@ -98,10 +93,10 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (emailTouched || submitAttempted) {
-      setEmailError(validateEmail(email));
+    if (loginTouched || submitAttempted) {
+      setLoginError(validateLogin(loginValue));
     }
-  }, [email, emailTouched, submitAttempted]);
+  }, [loginValue, loginTouched, submitAttempted]);
 
   useEffect(() => {
     if (passwordTouched || submitAttempted) {
@@ -110,21 +105,20 @@ const Login = () => {
   }, [password, passwordTouched, submitAttempted]);
 
   const isFormValid = () => {
-    return !validateEmail(email) && !validatePassword(password);
+    return !validateLogin(loginValue) && !validatePassword(password);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    setEmailTouched(true);
+    setLoginTouched(true);
     setPasswordTouched(true);
     setSubmitAttempted(true);
 
-    const emailErr = validateEmail(email);
+    const loginErr = validateLogin(loginValue);
     const passwordErr = validatePassword(password);
 
-    if (emailErr || passwordErr) {
-      setEmailError(emailErr);
+    if (loginErr || passwordErr) {
+      setLoginError(loginErr);
       setPasswordError(passwordErr);
       setGeneralError(
         "Упс! Введенные вами данные некорректны. Введите данные корректно и повторите попытку."
@@ -132,7 +126,7 @@ const Login = () => {
       return;
     }
 
-    const result = login(email, password);
+    const result = await login(loginValue, password);
     if (!result.success) {
       setGeneralError(result.error);
       setSubmitAttempted(false);
@@ -148,7 +142,7 @@ const Login = () => {
     if (submitAttempted && isFormValid()) {
       setGeneralError("");
     }
-  }, [email, password, submitAttempted, isFormValid]);
+  }, [loginValue, password, submitAttempted, isFormValid]);
 
   const isButtonDisabled = submitAttempted && !isFormValid();
 
@@ -156,18 +150,18 @@ const Login = () => {
     <Container>
       <Title>Вход</Title>
       <Form onSubmit={handleSubmit}>
-        <FieldWrapper $hasError={emailError}>
+        <FieldWrapper $hasError={loginError}>
           <Input
-            type="email"
-            name="email"
-            placeholder="Эл. почта"
-            value={email}
+            type="text"
+            name="login"
+            placeholder="Логин"
+            value={loginValue}
             onChange={(e) => {
-              setEmail(e.target.value);
-              setEmailTouched(true);
+              setLoginValue(e.target.value);
+              setLoginTouched(true);
             }}
-            $hasError={emailError}
-            $isValid={emailTouched && !emailError && email}
+            $hasError={loginError}
+            $isValid={loginTouched && !loginError && loginValue}
           />
         </FieldWrapper>
         <FieldWrapper $hasError={passwordError}>

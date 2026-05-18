@@ -1,58 +1,37 @@
-const BASE_URL = 'https://wedev-api.sky.pro/api';
-
 let authToken = null;
 
 export const setAuthToken = (token) => {
   authToken = token;
+  if (token) {
+    localStorage.setItem('token', token);
+  } else {
+    localStorage.removeItem('token');
+  }
 };
 
+export const getAuthToken = () => authToken || localStorage.getItem('token');
+
 const request = async (endpoint, options = {}) => {
-  const { skipJsonContentType = false, ...fetchOptions } = options;
-  
+  const token = getAuthToken();
   const headers = {
-    ...(authToken && { Authorization: `Bearer ${authToken}` }),
+    
+    ...(token && { Authorization: `Bearer ${token}` }),
     ...options.headers,
   };
-  
-  if (!skipJsonContentType) {
-    headers['Content-Type'] = 'application/json';
-  }
-  
-  
-  let body = options.body;
-  if (skipJsonContentType && body && typeof body === 'object') {
-    body = new URLSearchParams(body).toString();
-  }
 
-  const response = await fetch(`${BASE_URL}${endpoint}`, {
-    ...fetchOptions,
+  const response = await fetch(`https://wedev-api.sky.pro/api${endpoint}`, {
+    ...options,
     headers,
-    body,
   });
 
   if (!response.ok) {
-    let errorMessage = `Ошибка ${response.status}`;
-    try {
-      const errorData = await response.json();
-      errorMessage = errorData.message || errorData.error || errorMessage;
-    } catch (e) {
-      
-    }
-    throw new Error(errorMessage);
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || `Ошибка ${response.status}`);
   }
-
-  if (response.status === 204) return null;
-  
-  const contentType = response.headers.get('content-type');
-  if (contentType && contentType.includes('application/json')) {
-    return response.json();
-  }
-  return response.text();
+  return response.json();
 };
 
 export const get = (endpoint) => request(endpoint, { method: 'GET' });
-export const post = (endpoint, data, skipJsonContentType = false) => 
-  request(endpoint, { method: 'POST', body: data, skipJsonContentType });
-export const patch = (endpoint, data) => 
-  request(endpoint, { method: 'PATCH', body: data });
+export const post = (endpoint, data) => request(endpoint, { method: 'POST', body: JSON.stringify(data) });
+export const patch = (endpoint, data) => request(endpoint, { method: 'PATCH', body: JSON.stringify(data) });
 export const del = (endpoint) => request(endpoint, { method: 'DELETE' });

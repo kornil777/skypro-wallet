@@ -301,11 +301,12 @@ const ExpensesPage = () => {
       amount: parseFloat(values.amount),
     };
 
-    const added = await addExpense(newExpense);
-    setExpenses([added, ...expenses]);
-    resetForm();
-    setIsSubmitFailed(false);
-  };
+     const updatedList = await addExpense(newExpense);
+  setExpenses(updatedList); // обновляем таблицу
+  resetForm();              // очищаем поля формы
+  setIsSubmitFailed(false);
+};
+   
 
   const handleDelete = async (id) => {
     if (window.confirm("Удалить расход?")) {

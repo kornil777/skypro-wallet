@@ -1,30 +1,21 @@
 import { post, setAuthToken } from './client';
 
-export const loginApi = async (email, password) => {
+export const loginApi = async (login, password) => {
+  const response = await post('/user/login', { login, password });
   
-  const response = await post('/auth/login', { email, password }, true);
-  
-  if (response && response.token) {
-    setAuthToken(response.token);
-    localStorage.setItem('token', response.token);
-    
-    if (response.user) {
-      localStorage.setItem('user', JSON.stringify(response.user));
-    }
+  if (response.user?.token) {
+    setAuthToken(response.user.token);
   }
-  return response;
+  return response.user;
 };
 
-export const registerApi = async (email, password, name) => {
-  const response = await post('/auth/register', { email, password, name }, true);
-  if (response && response.token) {
-    setAuthToken(response.token);
-    localStorage.setItem('token', response.token);
-    if (response.user) {
-      localStorage.setItem('user', JSON.stringify(response.user));
-    }
+export const registerApi = async (login, password, name) => {
+  const response = await post('/user', { login, name, password });
+  
+  if (response.user?.token) {
+    setAuthToken(response.user.token);
   }
-  return response;
+  return response.user;
 };
 
 export const initAuth = () => {

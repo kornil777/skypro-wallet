@@ -1,76 +1,65 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import { setUser, clearUserData } from "../api/expensesApi";
+import { createContext, useContext, useState, useEffect } from 'react';
+import { loginApi, registerApi, initAuth } from '../api/authApi';
 
 const AuthContext = createContext();
 
-const USERS_STORAGE_KEY = "skypro_wallet_users";
-
-const getUsers = () => {
-  const stored = localStorage.getItem(USERS_STORAGE_KEY);
-  return stored ? JSON.parse(stored) : [];
-};
-
-const saveUser = (email, password, name) => {
-  const users = getUsers();
-  const existing = users.find((u) => u.email === email);
-  if (existing) throw new Error("Пользователь с таким email уже существует");
-  const newUser = { email, password, name };
-  users.push(newUser);
-  localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-  return newUser;
-};
-
-const verifyCredentials = (email, password) => {
-  const users = getUsers();
-  const user = users.find((u) => u.email === email && u.password === password);
-  if (!user) throw new Error("Неверный email или пароль");
-  return { email: user.email, name: user.name };
-};
-
 export const AuthProvider = ({ children }) => {
-  const [user, setUserState] = useState(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      const userData = JSON.parse(storedUser);
-      setUser(userData.email);
-      return userData;
-    }
-    return null;
-  });
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(false);
+    const restoreSession = async () => {
+      const hasToken = initAuth();
+      if (hasToken) {
+        
+        const savedLogin = localStorage.getItem('user_login');
+        const savedName = localStorage.getItem('user_name');
+        if (savedLogin) {
+          setUser({ login: savedLogin, name: savedName });
+        } else {
+          
+          setUser({ login: 'user', name: 'Пользователь' });
+        }
+      }
+      setLoading(false);
+    };
+    restoreSession();
   }, []);
 
-  const register = (email, password, name) => {
-    try {
-      const userData = saveUser(email, password, name || email.split("@")[0]);
-      localStorage.setItem("user", JSON.stringify({ email: userData.email, name: userData.name }));
-      setUserState({ email: userData.email, name: userData.name });
-      setUser(userData.email);
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  };
+  const login = async (login, password) => {
+  try {
+    const userData = await loginApi(login, password);
+    localStorage.setItem('user_login', userData.login);
+    localStorage.setItem('user_name', userData.name);
+    setUser({ login: userData.login, name: userData.name });
+    return { success: true };
+  } catch (error) {
+    console.error("Login error:", error);
+    // Возвращаем кастомное сообщение вместо технического
+    return { success: false, error: "Упс! Введенные вами данные некорректны. Введите данные корректно и повторите попытку." };
+  }
+};
 
-  const login = (email, password) => {
-    try {
-      const userData = verifyCredentials(email, password);
-      localStorage.setItem("user", JSON.stringify(userData));
-      setUserState(userData);
-      setUser(email);
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  };
+const register = async (login, password, name) => {
+  try {
+    const userData = await registerApi(login, password, name);
+    localStorage.setItem('user_login', userData.login);
+    localStorage.setItem('user_name', userData.name);
+    setUser({ login: userData.login, name: userData.name });
+    return { success: true };
+  } catch (error) {
+    console.error("Register error:", error);
+    return { success: false, error: "Упс! Введенные вами данные некорректны. Введите данные корректно и повторите попытку." };
+  }
+};
 
   const logout = () => {
-    localStorage.removeItem("user");
-    clearUserData();
-    setUserState(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user_login');
+    localStorage.removeItem('user_name');
+    setUser(null);
+    
+    import('../api/client').then(({ setAuthToken }) => setAuthToken(null));
   };
 
   return (
